@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <appender name="ElectronicQueue" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${HOME}/logs/electronic-queue.log</file>>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- daily rollover -->
+            <fileNamePattern>${HOME}/logs/archives/%d{yyyy-MM-dd}/electronic-queue-%d{yyyy-MM-dd_HH-mm,aux}.log.gz</fileNamePattern>
+            <maxHistory>90</maxHistory>
+        </rollingPolicy>
+
+        <encoder>
+            <pattern>%d [%22.22thread] [%-5level] [%logger{0}] %msg%n%ex</pattern>
+        </encoder>
+    </appender>
+
+    <root level="info">
+        <appender-ref ref="ElectronicQueue"/>
+    </root>
+
+</configuration>

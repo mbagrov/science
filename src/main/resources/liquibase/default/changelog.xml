@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+    <!--<changeSet id="add NotReceptionTimeToElectronicQueueReason table" author="mbagrov">
+        <createTable tableName="NotReceptionTimeToElectronicQueueReason">
+            <column name="id" type="varchar(32)">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="notReceptionTimeId" type="varchar(32)"/>
+            <column name="electronicQueueReasonId" type="varchar(32)"/>
+        </createTable>
+
+        <addUniqueConstraint tableName="NotReceptionTimeToElectronicQueueReason"
+                             columnNames="notReceptionTimeId, electronicQueueReasonId"
+                             constraintName="UK_notReceptionTimeId_electronicQueueReasonId"/>
+        
+        <addForeignKeyConstraint baseTableName="NotReceptionTimeToElectronicQueueReason" 
+                                 baseColumnNames="notReceptionTimeId"
+                                 constraintName="fk_NotReceptionTimeToElectronicQueueReason_NotReceptionTime" 
+                                 referencedTableName="NotReceptionTimeCatalogItem"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseTableName="NotReceptionTimeToElectronicQueueReason"
+                                 baseColumnNames="electronicQueueReasonId"
+                                 constraintName="fk_NotReceptionTimeToElectronicQueueReason_ElectronicQueueReason"
+                                 referencedTableName="ElectronicQueueReason"
+                                 referencedColumnNames="id"/>
+    </changeSet>-->
+
+    <changeSet id="create Geometry table" author="mbagrov">
+        <createTable tableName="Geometry">
+            <column name="id" type="varchar(32)">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="type" type="varchar(32)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="coordinates" type="text">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="create Feature table" author="mbagrov">
+        <createTable tableName="Feature">
+            <column name="id" type="varchar(32)">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="type" type="varchar(10)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="geometryId" type="varchar(32)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="properties" type="text"/>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="Feature"
+                                 baseColumnNames="geometryId"
+                                 constraintName="fk_Feature_Geometry"
+                                 referencedTableName="Geometry"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+
+</databaseChangeLog>

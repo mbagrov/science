@@ -1,0 +1,36 @@
+/.classpath
+/.settings
+/target
+/logs
+/.cache
+/.target
+/bin
+/.idea
+/.idea_modules
+/dist
+/data
+
+target/
+import/
+
+lib/
+project/target/
+*.class
+*.log
+project/project/
+src/main/resources/application.conf
+
+# sbt specific
+.cache
+.history
+.lib/
+dist/*
+lib_managed/
+src_managed/
+project/boot/
+project/plugins/project/
+
+# IntelliJ specific
+.idea
+
+src/main/resources/web/javascript/bower_components/

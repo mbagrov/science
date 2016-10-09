@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+    <title>[Подтверждение / Отмена] записи на прием в Рособрнадзор</title>
+    <mail>
+        <title>{{eq.title}} записи на прием в Рособрнадзор</title>
+    </mail>
+</config>

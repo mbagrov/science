@@ -1,0 +1,47 @@
+akka {
+  loglevel = DEBUG
+  actor {
+    provider = "akka.remote.RemoteActorRefProvider"
+  }
+  remote {
+    enabled-transports = ["akka.remote.netty.tcp"]
+    netty.tcp {
+      hostname = "127.0.0.1"
+      port = 0
+    }
+  }
+}
+
+eqExternal{
+  akka {
+    loglevel = DEBUG
+
+    actor {
+      provider = "akka.remote.RemoteActorRefProvider"
+    }
+
+    remote {
+      enabled-transports = ["akka.remote.netty.tcp"]
+      netty.tcp {
+        hostname = "127.0.0.1"
+        port = 2255
+        maximum-frame-size = 51200000b
+      }
+    }
+  }
+}
+
+akka.http.server.remote-address-header = "on"
+
+db.default.driver=org.postgresql.Driver
+db.default.url="jdbc:postgresql://127.0.0.1:5432/science-project"
+db.default.user=postgres
+db.default.password="***"
+
+http-service-port-eq = "2256"
+
+http-service-host = "localhost"
+
+log-sql = false
+
+liquibase.changelog = "liquibase/default/changelog.xml"
