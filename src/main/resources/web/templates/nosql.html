@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset=utf-8 />
+    <title>Demo</title>
+
+    <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no' />
+
+    <script src="../javascript/jquery-1.12.0.min.js"></script>
+
+    <!--Add mapbox.js -->
+    <script src='https://api.tiles.mapbox.com/mapbox.js/v1.6.2/mapbox.js'></script>
+    <link href='https://api.tiles.mapbox.com/mapbox.js/v1.6.2/mapbox.css' rel='stylesheet' />
+
+    <!--<script src="https://unpkg.com/leaflet@1.0.1/dist/leaflet.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.1/dist/leaflet.css" />-->
+
+    <!--Add draw plugin -->
+    <link rel='stylesheet' href='//api.tiles.mapbox.com/mapbox.js/plugins/leaflet-draw/v0.2.2/leaflet.draw.css' />
+    <script src='//api.tiles.mapbox.com/mapbox.js/plugins/leaflet-draw/v0.2.2/leaflet.draw.js'></script>
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+        #map {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 100%;
+        }
+        #delete, #export {
+            position: absolute;
+            top:50px;
+            right:10px;
+            z-index:100;
+            background:white;
+            color:black;
+            padding:6px;
+            border-radius:4px;
+            font-family: 'Helvetica Neue';
+            cursor: pointer;
+            font-size:12px;
+            text-decoration:none;
+        }
+        #export {
+            top:90px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div id='map'></div>
+<div id='delete'>Delete Features</div>
+
+<script>
+    var map = L.mapbox.map('map').setView([44.59504,33.47571], 14);
+
+    L.control.layers({
+        'Terrain Map': L.mapbox.tileLayer('bobbysud.i2pfp2lb', {
+            detectRetina: true
+        }).addTo(map)
+    }).addTo(map);
+
+    var oldFeaturesLayer = new L.GeoJSON();
+
+    var initData = function () {
+        $.ajax({
+            method: 'GET',
+            url: '/load?dbType=nosql'
+        }).done(function(data) {
+            $.each(data.features, function (i, f) {
+                //FIXME: Переделать на стороне сервера сериализацию в Json фич
+                var parsed = {};
+                $.extend(true, parsed, f);
+                parsed.properties = JSON.parse(f.properties);
+                parsed.geometry.coordinates = JSON.parse(f.geometry.coordinates);
+                oldFeaturesLayer.addData(parsed);
+            });
+            oldFeaturesLayer.addTo(map);
+        });
+    };
+
+    initData();
+
+    var featureGroup = L.featureGroup().addTo(map);
+
+    var drawControl = new L.Control.Draw({
+        drawing: true,
+        displayControlsDefault: true/*,
+        edit: {
+            featureGroup: featureGroup
+        }*/
+    }).addTo(map);
+
+    var save = function () {
+        var data = featureGroup.toGeoJSON();
+        var stringified = JSON.stringify(data);
+
+        $.ajax({
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            method: 'POST',
+            url: '/nosql/save',
+            data: stringified,
+            dataType: 'json'
+        }).done(function() {
+            console.log('Прилетели');
+        });
+    };
+
+    map.on('draw:created', function(e) {
+        featureGroup.addLayer(e.layer);
+        save();
+    });
+
+    document.getElementById('delete').onclick = function(e) {
+        featureGroup.clearLayers();
+        oldFeaturesLayer.clearLayers();
+
+        $.ajax({
+            method: 'GET',
+            url: '/delete?dbType=nosql'
+        }).done(function() {
+            console.log('Прилетели');
+        });
+    };
+</script>
+
+</body>
+
+</html>

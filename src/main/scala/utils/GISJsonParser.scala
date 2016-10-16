@@ -39,25 +39,21 @@ object GISJsonParser {
 
   def fromJson(json: JsObject): Features = {
     json.getFields(ERConstants.GeoJSON.featuresField) match {
-      case Seq(jsArray) => {
-        jsArray match {
-          case JsArray(jsObjects) => {
-            jsObjects.foldLeft[Features]((Nil, Nil, Nil)) { (accumulator, f) =>
-              val points = {
-                val point = Try(f.convertTo[FeaturePoint]).toOption
-                point.fold(accumulator._1)(p => accumulator._1 :+ p)
-              }
-              val lineStrings = {
-                val lineString = Try(f.convertTo[FeatureLineString]).toOption
-                lineString.fold(accumulator._2)(ls => accumulator._2 :+ ls)
-              }
-              val polygons = {
-                val polygon = Try(f.convertTo[FeaturePolygon]).toOption
-                polygon.fold(accumulator._3)(p => accumulator._3 :+ p)
-              }
-              (points, lineStrings, polygons)
-            }
+      case Seq(JsArray(jsObjects)) => {
+        jsObjects.foldLeft[Features]((Nil, Nil, Nil)) { (accumulator, f) =>
+          val points = {
+            val point = Try(f.convertTo[FeaturePoint]).toOption
+            point.fold(accumulator._1)(p => accumulator._1 :+ p)
           }
+          val lineStrings = {
+            val lineString = Try(f.convertTo[FeatureLineString]).toOption
+            lineString.fold(accumulator._2)(ls => accumulator._2 :+ ls)
+          }
+          val polygons = {
+            val polygon = Try(f.convertTo[FeaturePolygon]).toOption
+            polygon.fold(accumulator._3)(p => accumulator._3 :+ p)
+          }
+          (points, lineStrings, polygons)
         }
       }
     }

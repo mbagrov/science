@@ -8,5 +8,6 @@ class EQModule extends CoreModule {
 
     bindSingleton[FeatureService, FeatureServiceImpl]
     bindSingleton[GeometryService, GeometryServiceImpl]
+    bindSingleton[GISDataService, GisDataServiceImpl]
   }
 }

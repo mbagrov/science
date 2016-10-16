@@ -7,7 +7,7 @@
 
     <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no' />
 
-    <script src="javascript/jquery-1.12.0.min.js"></script>
+    <script src="../javascript/jquery-1.12.0.min.js"></script>
 
     <!--Add mapbox.js -->
     <script src='https://api.tiles.mapbox.com/mapbox.js/v1.6.2/mapbox.js'></script>
@@ -55,46 +55,9 @@
 
 <div id='map'></div>
 <div id='delete'>Delete Features</div>
-<!--<a href='#' id='export'>Export Features</a>-->
 
 <script>
     var map = L.mapbox.map('map').setView([44.59504,33.47571], 14);
-
-    /*map.on('load', function () {
-
-        $.ajax({
-            method: 'GET',
-            url: '/load'
-        }).done(function(data) {
-            map.addSource("points", {
-                "type": "geojson",
-                "data": data
-            });
-
-            map.addLayer({
-                "id": "points",
-                "type": "symbol",
-                "source": "points",
-                "layout": {
-                    "icon-image": "{icon}-15",
-                    "text-field": "{title}",
-                    "text-font": ["Open Sans Semibold", "Arial Unicode MS Bold"],
-                    "text-offset": [0, 0.6],
-                    "text-anchor": "top"
-                }
-            });
-        });
-    });*/
-
-    // Add layers to the map
-    /*L.control.layers({
-        'Satellite Map': L.mapbox.tileLayer('bobbysud.map-l4i2m7nd', {
-            detectRetina: true
-        }).addTo(map),
-        'Terrain Map': L.mapbox.tileLayer('bobbysud.i2pfp2lb', {
-            detectRetina: true
-        })
-    }).addTo(map);*/
 
     L.control.layers({
         'Terrain Map': L.mapbox.tileLayer('bobbysud.i2pfp2lb', {
@@ -105,15 +68,14 @@
     var oldFeaturesLayer = new L.GeoJSON();
 
     var initData = function () {
-        var layer = new L.GeoJSON();/*.addTo(map);*/
         $.ajax({
             method: 'GET',
-            url: '/load'
+            url: '/relational/load'
         }).done(function(data) {
             $.each(data.features, function (i, f) {
                 //FIXME: Переделать на стороне сервера сериализацию в Json фич
                 var parsed = {};
-                $.extend(true, parsed,  f);
+                $.extend(true, parsed, f);
                 parsed.properties = JSON.parse(f.properties);
                 parsed.geometry.coordinates = JSON.parse(f.geometry.coordinates);
                 oldFeaturesLayer.addData(parsed);
@@ -143,7 +105,7 @@
                 'Content-Type': 'application/json'
             },
             method: 'POST',
-            url: '/save',
+            url: '/relational/save',
             data: stringified,
             dataType: 'json'
         }).done(function() {
@@ -152,43 +114,21 @@
     };
 
     map.on('draw:created', function(e) {
-        // Each time a feaute is created, it's added to the over arching feature group
         featureGroup.addLayer(e.layer);
         save();
     });
 
-
-    // on click, clear all layers
     document.getElementById('delete').onclick = function(e) {
         featureGroup.clearLayers();
         oldFeaturesLayer.clearLayers();
 
         $.ajax({
             method: 'GET',
-            url: '/delete'
+            url: '/delete?dbType=relational'
         }).done(function() {
             console.log('Прилетели');
         });
     };
-
-    /*document.getElementById('export').onclick = function(e) {
-        // Extract GeoJson from featureGroup
-        var data = featureGroup.toGeoJSON();
-
-        var stringified = JSON.stringify(data);
-
-        $.ajax({
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            method: 'POST',
-            url: '/save',
-            data: stringified,
-            dataType: 'json'
-        }).done(function() {
-            console.log('Прилетели');
-        });
-    }*/
 </script>
 
 </body>
